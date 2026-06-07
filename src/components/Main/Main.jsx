@@ -10,6 +10,9 @@ import { assets } from "../../assets/assets";
 import { Context } from "../../context/Context";
 // 引入Markdown渲染组件
 import MarkdownRenderer from "../MarkdownRenderer/MarkdownRenderer";
+// 引入技能相关组件
+import SkillsModal from "../Skills/SkillsModal";
+import SkillActiveIndicator from "../Skills/SkillActiveIndicator";
 
 // 单条消息组件
 const MessageRow = ({ message }) => (
@@ -24,6 +27,15 @@ const MessageRow = ({ message }) => (
     />
     {/* 消息内容区域 */}
     <div className="message-content">
+      {/* 显示技能指示器 */}
+      {message.skillId && (
+        <SkillActiveIndicator
+          skill={{
+            id: message.skillId,
+            name: message.skillName
+          }}
+        />
+      )}
       {/* 如果正在生成且还没有内容，显示加载动画 */}
       {message.status === "generating" && !message.content ? (
         <div className="loader">
@@ -52,9 +64,13 @@ const MessageRow = ({ message }) => (
 const Main = () => {
   console.log('Main 组件开始渲染...');
 
+  // 技能弹窗显示状态
+  const [showSkillsModal, setShowSkillsModal] = useState(false);
+
   // 从全局Context中获取需要的状态和方法
   const {
     abortGeneration,
+    activeSkill,
     handleKeyPress,
     input,
     isAtBottom,
@@ -96,6 +112,14 @@ const Main = () => {
       <div className="nav">
         <p>yuanAI</p>
         <div className="nav-actions">
+          {/* 技能管理按钮 */}
+          <button
+            className="skill-button"
+            onClick={() => setShowSkillsModal(true)}
+            title="技能管理"
+          >
+            🎯
+          </button>
           <img src={assets.user_icon} alt="" />
         </div>
       </div>
@@ -242,6 +266,12 @@ const Main = () => {
           </p>
         </div>
       </div>
+
+      {/* 技能管理弹窗 */}
+      <SkillsModal
+        isOpen={showSkillsModal}
+        onClose={() => setShowSkillsModal(false)}
+      />
     </div>
   );
 };

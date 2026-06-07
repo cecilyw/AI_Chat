@@ -277,7 +277,8 @@ export class SkillStorage {
 
       return {
         totalSkills: skills.length,
-        totalUsage: skills.reduce((sum, skill) => sum + skill.usageCount, 0),
+        favoriteSkills: skills.filter(s => s.isFavorite === true).length,
+        totalUsage: skills.reduce((sum, s) => sum + s.usageCount, 0),
         totalSize: totalSize,
         lastUpdate: skills.length > 0 ? Math.max(...skills.map(s => s.updatedAt)) : null
       };

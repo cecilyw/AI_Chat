@@ -222,9 +222,70 @@ export class SkillService {
     }
   }
 
+  // 导入技能配置
+  async importSkills(jsonData) {
+    return await skillStorage.importSkills(jsonData);
+  }
+
+  // 切换收藏状态
+  async toggleFavorite(skillId) {
+    try {
+      let skill = this.getSkillFromCache(skillId);
+
+      if (!skill) {
+        const skills = await this.loadSkills();
+        skill = skills.find(s => s.id === skillId);
+      }
+
+      if (!skill) {
+        throw new Error('技能不存在');
+      }
+
+      // 克隆并更新收藏状态
+      const updatedSkill = skill.clone();
+      const newFavoriteStatus = !skill.isFavorite;
+      updatedSkill.update({ isFavorite: newFavoriteStatus });
+
+      // 保存并更新缓存
+      const savedSkill = await skillStorage.saveSkill(updatedSkill);
+      this.setSkillToCache(savedSkill);
+
+      return savedSkill;
+    } catch (error) {
+      console.error('切换收藏状态失败:', error);
+      throw error;
+    }
+  }
+
+  // 获取收藏的技能
+  async getFavoriteSkills() {
+    try {
+      const skills = await this.getAllSkills();
+      return skills.filter(skill => skill.isFavorite === true);
+    } catch (error) {
+      console.error('获取收藏技能失败:', error);
+      return [];
+    }
+  }
+
   // 清空缓存
   clearCache() {
     this.cache.clear();
+  }
+
+  // 增加技能使用次数
+  async incrementUsage(skillId) {
+    try {
+      const skill = await skillStorage.incrementUsage(skillId);
+      // 更新缓存
+      if (skill) {
+        this.setSkillToCache(skill);
+      }
+      return skill;
+    } catch (error) {
+      console.error('增加使用次数失败:', error);
+      throw error;
+    }
   }
 
   // 获取服务状态

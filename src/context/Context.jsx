@@ -11,6 +11,9 @@ import {
 import streamParser from "../services/streamParser";
 // 引入语音识别自定义Hook
 import { useSpeechRecognition } from "../hooks/useSpeechRecognition";
+// 引入技能相关
+import { skillService } from "../services/skillService";
+import { SkillMatcher } from "../services/skillMatcher";
 
 // 创建全局Context上下文对象
 export const Context = createContext();
@@ -38,6 +41,10 @@ const ContextProvider = (props) => {
   // 是否在底部状态（用于滚动）
   const [isAtBottom, setIsAtBottom] = useState(true);
 
+  // 技能相关状态
+  const [activeSkill, setActiveSkill] = useState(null);  // 当前激活的技能
+  const [skillsInitialized, setSkillsInitialized] = useState(false);  // 技能服务是否已初始化
+
   // Virtuoso虚拟滚动组件的引用
   const virtuosoRef = useRef(null);
 
@@ -64,6 +71,45 @@ const ContextProvider = (props) => {
     setIsGenerating(false);
     setIsAtBottom(true);
   }, []);
+
+  // 初始化技能服务
+  const initializeSkills = useCallback(async () => {
+    try {
+      await skillService.initialize();
+      setSkillsInitialized(true);
+      console.log('技能服务初始化完成');
+    } catch (error) {
+      console.error('初始化技能服务失败:', error);
+    }
+  }, []);
+
+  // 组件挂载时初始化技能服务
+  useEffect(() => {
+    initializeSkills();
+  }, [initializeSkills]);
+
+  // 匹配并激活技能
+  const matchAndActivateSkill = useCallback(async (input) => {
+    if (!skillsInitialized) {
+      return null;
+    }
+
+    try {
+      const matchedSkill = await SkillMatcher.matchSkill(input);
+      if (matchedSkill) {
+        setActiveSkill(matchedSkill);
+        await skillService.incrementUsage(matchedSkill.id);
+        console.log(`匹配到技能: ${matchedSkill.name}`);
+      } else {
+        setActiveSkill(null);
+      }
+      return matchedSkill;
+    } catch (error) {
+      console.error('技能匹配失败:', error);
+      setActiveSkill(null);
+      return null;
+    }
+  }, [skillsInitialized]);
 
   // 加载指定会话的函数
   const loadSession = useCallback(
@@ -197,12 +243,18 @@ const ContextProvider = (props) => {
       }
 
       const normalizedText = messageText.trim();
+
+      // 匹配技能
+      const matchedSkill = await matchAndActivateSkill(normalizedText);
+
       // 创建用户消息对象
       const userMessage = {
         id: Date.now(),
         role: "user",
         content: normalizedText,
         timestamp: new Date().toLocaleString(),
+        skillId: matchedSkill?.id || null,
+        skillName: matchedSkill?.name || null,
       };
 
       // 添加用户消息到消息列表
@@ -239,11 +291,20 @@ const ContextProvider = (props) => {
       });
 
       try {
+        // 构建系统提示词（如果有匹配的技能）
+        let systemPrompt = "";
+        if (matchedSkill) {
+          systemPrompt = `${matchedSkill.name}：\n\n${matchedSkill.description}\n\n${matchedSkill.content}`;
+        }
+
         // 构建API请求格式的消息
-        const apiMessages = nextMessages.map((message) => ({
-          role: message.role,
-          content: message.content,
-        }));
+        const apiMessages = [
+          ...(systemPrompt ? [{ role: "system", content: systemPrompt }] : []),
+          ...nextMessages.map((message) => ({
+            role: message.role,
+            content: message.content,
+          })),
+        ];
 
         // 调用流式解析服务发送请求
         await streamParser.fetchStream(
@@ -375,6 +436,7 @@ const ContextProvider = (props) => {
   const contextValue = useMemo(
     () => ({
       abortGeneration,
+      activeSkill,
       createNewSession,
       currentSessionId,
       deleteSession,
@@ -391,6 +453,7 @@ const ContextProvider = (props) => {
       resultData,
       scrollToBottom,
       sessions,
+      setActiveSkill,
       setInput,
       setIsAtBottom,
       setRecentPrompt,
@@ -404,6 +467,7 @@ const ContextProvider = (props) => {
     }),
     [
       abortGeneration,
+      activeSkill,
       createNewSession,
       currentSessionId,
       deleteSession,

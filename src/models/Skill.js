@@ -10,6 +10,8 @@ export class Skill {
     this.name = data.name || '';
     this.description = data.description || '';
     this.content = data.content || '';
+    this.keywords = data.keywords || [];  // 触发关键词
+    this.isFavorite = data.isFavorite || false;  // 是否收藏
     this.usageCount = data.usageCount || 0;
     this.createdAt = data.createdAt || Date.now();
     this.updatedAt = data.updatedAt || Date.now();
@@ -39,6 +41,8 @@ export class Skill {
       name: this.name,
       description: this.description,
       content: this.content,
+      keywords: this.keywords,
+      isFavorite: this.isFavorite,
       usageCount: this.usageCount,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt
@@ -55,5 +59,16 @@ export class Skill {
     Object.assign(this, updates);
     this.updatedAt = Date.now();
     return this;
+  }
+
+  // 检查是否匹配用户输入（根据关键词）
+  matches(input) {
+    if (!input || !this.keywords || this.keywords.length === 0) {
+      return false;
+    }
+    const lowerInput = input.toLowerCase();
+    return this.keywords.some(keyword =>
+      lowerInput.includes(keyword.toLowerCase())
+    );
   }
 }

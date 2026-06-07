@@ -1,0 +1,29 @@
+/* 技能指示器样式 */
+.skill-active-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #e8f5e9;
+  border-radius: 20px;
+  font-size: 13px;
+  color: #2e7d32;
+  margin-bottom: 8px;
+}
+
+.skill-icon {
+  font-size: 16px;
+}
+
+.skill-name {
+  font-weight: 500;
+}
+
+.skill-badge {
+  padding: 2px 8px;
+  background: #4CAF50;
+  color: white;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
