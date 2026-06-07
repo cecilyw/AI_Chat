@@ -1,0 +1,131 @@
+.sidebar {
+  height: 100%;
+  min-height: 100vh;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #f0f4f9;
+  padding: 25px 15px;
+  transition:
+    width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.sidebar-extended {
+  width: 280px;
+}
+
+.sidebar-collapsed {
+  width: 80px;
+  padding: 25px 10px;
+}
+
+.sidebar img {
+  width: 20px;
+}
+.sidebar .menu {
+  display: block;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.sidebar .new-chat {
+  margin-top: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+  background-color: #e6eaf1;
+  border-radius: 50px;
+  font-size: 14px;
+  color: grey;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-extended .new-chat {
+  padding: 10px 15px;
+}
+
+.sidebar-collapsed .new-chat {
+  padding: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.sidebar .recent {
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 1.5s;
+}
+.sidebar .recent-title {
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+.sidebar .recent-entry {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  padding-right: 40px;
+  border-radius: 50px;
+  color: #282828;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.sidebar .recent-entry p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  margin: 0;
+}
+.sidebar .recent-entry:hover {
+  background-color: #e2e6eb;
+}
+.sidebar .recent-entry.active {
+  background-color: #d0d7de;
+  color: #0284c7;
+}
+.sidebar .recent-entry .delete-icon {
+  margin-left: auto;
+  opacity: 0;
+  transition: opacity 0.2s;
+  cursor: pointer;
+}
+.sidebar .recent-entry:hover .delete-icon {
+  opacity: 1;
+}
+
+.sidebar .bottom {
+  display: flex;
+  flex-direction: column;
+}
+.sidebar .bottom-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-right: 10px;
+  cursor: pointer;
+  transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar .bottom-item .skills-count {
+  background: #4CAF50;
+  color: white;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: auto;
+}
+
+@media (max-width: 600px) {
+  .sidebar {
+    display: none;
+  }
+}

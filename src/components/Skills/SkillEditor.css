@@ -1,0 +1,198 @@
+/* 技能编辑器样式 */
+.skill-editor {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+  position: relative;
+}
+
+.skill-editor::-webkit-scrollbar {
+  width: 8px;
+}
+
+.skill-editor::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.skill-editor::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.skill-editor::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* 编辑器头部 */
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  background: #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background: #e0e0e0;
+}
+
+.editor-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.cancel-btn, .save-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.cancel-btn {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.cancel-btn:hover {
+  background: #e0e0e0;
+}
+
+.save-btn {
+  background: #4CAF50;
+  color: white;
+}
+
+.save-btn:hover:not(:disabled) {
+  background: #45a049;
+}
+
+.save-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* 表单组 */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+.form-group label span {
+  color: #f44336;
+  margin-left: 2px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #4CAF50;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 300px; /* 增加内容区域高度 */
+}
+
+/* 编辑器底部 */
+.editor-footer {
+  margin-top: 30px;
+}
+
+.markdown-hint {
+  font-size: 12px;
+  color: #666;
+  background: #f9f9f9;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border-left: 3px solid #4CAF50;
+}
+
+/* 加载状态 */
+.loading-editor {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #4CAF50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .skill-editor {
+    padding: 15px;
+  }
+
+  .editor-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+
+  .header-left {
+    width: 100%;
+  }
+
+  .form-group textarea {
+    min-height: 200px; /* 在移动端适当减小高度 */
+  }
+}
