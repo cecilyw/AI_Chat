@@ -34,13 +34,28 @@ if not matched:
 
 print(f"Routed to: {matched_key} -> {matched['name']}")
 
-# ---- 3. Add labels ----
+# ---- 3. Ensure labels exist, then add to issue ----
 labels = [matched['label'], 'status/new']
+
+# Create labels first (ignore error if already exists)
+for lbl in labels:
+    r = subprocess.run(
+        ['gh', 'label', 'create', lbl, '--repo', repo],
+        check=False, capture_output=True, text=True
+    )
+    if r.returncode != 0:
+        if 'already exists' in r.stderr:
+            print(f"Label already exists: {lbl}")
+        else:
+            print(f"Label create error ({lbl}): {r.stderr}")
+    else:
+        print(f"Label created: {lbl}")
+
 cmd = ['gh', 'issue', 'edit', issue_number, '--repo', repo]
 for lbl in labels:
     cmd += ['--add-label', lbl]
 subprocess.run(cmd, check=True)
-print(f"Labels added: {labels}")
+print(f"Labels added to issue: {labels}")
 
 # ---- 4. Post comment @maintainer ----
 m = matched['maintainer']
