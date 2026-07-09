@@ -1,0 +1,34 @@
+name: "提交 Issue"
+description: "选择产品线，描述你遇到的问题"
+title: "[简短描述问题]"
+labels: ["status/new"]
+body:
+  - type: dropdown
+    id: product
+    attributes:
+      label: "产品线"
+      description: "选择问题所属的华为云产品"
+      options:
+        - "ECS（弹性云服务器）"
+        - "CES（云监控）"
+        - "CCE（云容器引擎）"
+        - "OBS（对象存储）"
+        - "RDS（关系型数据库）"
+        - "CodeArts（软件开发平台）"
+        - "IAM（统一身份认证）"
+        - "其他"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "详细描述"
+      description: "请写清楚：1. 做了什么操作  2. 发生了什么（贴报错信息）  3. 期望怎样"
+      placeholder: |
+        示例：
+        1. 操作：在华东区调用 create_instance 创建 c7.xlarge 实例
+        2. 报错：返回 {"error": {"code": 403, "message": "Forbidden"}}
+        3. 期望：成功创建实例，返回 instance_id
+    validations:
+      required: true
