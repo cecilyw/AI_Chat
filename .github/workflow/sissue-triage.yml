@@ -1,0 +1,96 @@
+name: Issue Triage
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Auto-triage new issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          REPO: ${{ github.repository }}
+        run: |
+          python3 << 'PYEOF'
+          import os, re, yaml, subprocess
+
+          body = os.environ['ISSUE_BODY']
+          title = os.environ['ISSUE_TITLE']
+          issue_number = os.environ['ISSUE_NUMBER']
+          repo = os.environ['REPO']
+
+          # ---- 1. Parse product from issue form ----
+          # GitHub Issue Forms format: "### 产品线\n\nECS（弹性云服务器）\n\n###"
+          match = re.search(r'###\s*产品线\s*\n+\s*(.+?)\s*\n+\s*###', body, re.DOTALL)
+          if not match:
+              match = re.search(r'###\s*产品线\s*\n+\s*(.+?)\s*$', body, re.DOTALL)
+          selected = match.group(1).strip() if match else None
+          if not selected:
+              print("ERROR: Could not parse product from issue body")
+              print(f"Body was:\n{body}")
+              exit(1)
+          print(f"Product selected by user: {selected}")
+
+          # ---- 2. Match against routing config ----
+          with open('.github/issue-routing.yml', 'r', encoding='utf-8') as f:
+              config = yaml.safe_load(f)
+
+          matched_key, matched = None, None
+          for key, prod in config['products'].items():
+              if prod.get('form_label') == selected:
+                  matched_key, matched = key, prod
+                  break
+
+          if not matched:
+              print(f"WARN: No routing match for '{selected}', defaulting to 'other'")
+              matched_key, matched = 'other', config['products']['other']
+
+          print(f"Routed to: {matched_key} -> {matched['name']}")
+
+          # ---- 3. Add labels ----
+          labels = [matched['label'], 'status/new']
+          cmd = ['gh', 'issue', 'edit', issue_number, '--repo', repo]
+          for lbl in labels:
+              cmd += ['--add-label', lbl]
+          subprocess.run(cmd, check=True)
+          print(f"Labels added: {labels}")
+
+          # ---- 4. Post comment @maintainer ----
+          m = matched['maintainer']
+          sla = matched['sla']
+
+          comment = f"""@{m['github']} 您好，收到一个新 Issue：
+
+| 项目 | 内容 |
+|------|------|
+| Issue 编号 | #{issue_number} |
+| 产品线 | {matched['name']} |
+| 标题 | {title} |
+| SLA 首次响应 | **{sla['first_response_hours']}h** 内 |
+
+请在 **{sla['first_response_hours']}h 内** 给出排查方向或确认接收。如有疑问请在评论区沟通。"""
+
+          subprocess.run(
+              ['gh', 'issue', 'comment', issue_number, '--body', comment, '--repo', repo],
+              check=True
+          )
+          print("Comment posted. Triage complete!")
+          PYEOF
