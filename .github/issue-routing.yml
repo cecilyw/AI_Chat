@@ -1,0 +1,123 @@
+# MCP Issue 路由对照表
+# 产品部接口人变更时，提 PR 修改此文件即可，合入后即时生效
+
+products:
+  ecs:
+    name: "弹性云服务器 ECS"
+    label: "product/ecs"
+    form_label: "ECS（弹性云服务器）"
+    maintainer:
+      github: "cecilyw"
+      name: "ECS 接口人"
+      backup_github: "cecilyw"
+    sla:
+      first_response_hours: 48
+      fix_days: 10
+    escalation:
+      manager_github: "cecilyw"
+      manager_name: "ECS 部长"
+
+  ces:
+    name: "云监控 CES"
+    label: "product/ces"
+    form_label: "CES（云监控）"
+    maintainer:
+      github: "cecilyw"
+      name: "CES 接口人"
+      backup_github: "cecilyw"
+    sla:
+      first_response_hours: 48
+      fix_days: 10
+    escalation:
+      manager_github: "cecilyw"
+      manager_name: "CES 部长"
+
+  cce:
+    name: "云容器引擎 CCE"
+    label: "product/cce"
+    form_label: "CCE（云容器引擎）"
+    maintainer:
+      github: "cecilyw"
+      name: "CCE 接口人"
+      backup_github: "cecilyw"
+    sla:
+      first_response_hours: 48
+      fix_days: 10
+    escalation:
+      manager_github: "cecilyw"
+      manager_name: "CCE 部长"
+
+  obs:
+    name: "对象存储 OBS"
+    label: "product/obs"
+    form_label: "OBS（对象存储）"
+    maintainer:
+      github: "cecilyw"
+      name: "OBS 接口人"
+      backup_github: "cecilyw"
+    sla:
+      first_response_hours: 48
+      fix_days: 10
+    escalation:
+      manager_github: "cecilyw"
+      manager_name: "OBS 部长"
+
+  rds:
+    name: "关系型数据库 RDS"
+    label: "product/rds"
+    form_label: "RDS（关系型数据库）"
+    maintainer:
+      github: "cecilyw"
+      name: "RDS 接口人"
+      backup_github: "cecilyw"
+    sla:
+      first_response_hours: 48
+      fix_days: 10
+    escalation:
+      manager_github: "cecilyw"
+      manager_name: "RDS 部长"
+
+  codearts:
+    name: "软件开发平台 CodeArts"
+    label: "product/codearts"
+    form_label: "CodeArts（软件开发平台）"
+    maintainer:
+      github: "cecilyw"
+      name: "CodeArts 接口人"
+      backup_github: "cecilyw"
+    sla:
+      first_response_hours: 48
+      fix_days: 10
+    escalation:
+      manager_github: "cecilyw"
+      manager_name: "CodeArts 部长"
+
+  iam:
+    name: "统一身份认证 IAM"
+    label: "product/iam"
+    form_label: "IAM（统一身份认证）"
+    maintainer:
+      github: "cecilyw"
+      name: "IAM 接口人"
+      backup_github: "cecilyw"
+    sla:
+      first_response_hours: 48
+      fix_days: 10
+    escalation:
+      manager_github: "cecilyw"
+      manager_name: "IAM 部长"
+
+  other:
+    name: "其他产品"
+    label: "product/other"
+    form_label: "其他"
+    maintainer:
+      github: "cecilyw"
+      name: "项目组"
+      backup_github: "cecilyw"
+    sla:
+      first_response_hours: 48
+      fix_days: 10
+    escalation:
+      manager_github: "cecilyw"
+      manager_name: "项目组负责人"
