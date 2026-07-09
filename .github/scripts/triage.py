@@ -34,8 +34,16 @@ if not matched:
 
 print(f"Routed to: {matched_key} -> {matched['name']}")
 
-# ---- 3. Ensure labels exist, then add to issue ----
-labels = [matched['label'], 'status/new']
+# ---- 3. Determine severity ----
+severity = 'severity/major'  # default
+critical_kw = ['安全', '漏洞', '不可用', '崩溃', '数据泄露', '宕机', '无法启动', '大面积',
+               'security', 'critical', 'crash', 'down', 'outage']
+if any(kw in body.lower() or kw in title.lower() for kw in critical_kw):
+    severity = 'severity/critical'
+    print("Auto-detected critical severity based on keywords")
+
+# ---- 4. Ensure labels exist, then add to issue ----
+labels = [matched['label'], severity, 'status/new']
 
 # Create labels first (ignore error if already exists)
 for lbl in labels:
@@ -57,9 +65,10 @@ for lbl in labels:
 subprocess.run(cmd, check=True)
 print(f"Labels added to issue: {labels}")
 
-# ---- 4. Post comment @maintainer ----
+# ---- 5. Post comment @maintainer ----
 m = matched['maintainer']
 sla = matched['sla']
+severity_text = '🔴 critical' if severity == 'severity/critical' else '🟠 major'
 
 comment = (
     f"@{m['github']} 您好，收到一个新 Issue：\n\n"
@@ -67,6 +76,7 @@ comment = (
     "|------|------|\n"
     f"| Issue 编号 | #{issue_number} |\n"
     f"| 产品线 | {matched['name']} |\n"
+    f"| 严重级别 | {severity_text} |\n"
     f"| 标题 | {title} |\n"
     f"| SLA 首次响应 | **{sla['first_response_hours']}h** 内 |\n\n"
     f"请在 **{sla['first_response_hours']}h 内** 给出排查方向或确认接收。如有疑问请在评论区沟通。"
