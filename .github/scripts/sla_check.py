@@ -41,7 +41,12 @@ for issue in issues:
     # Calculate hours since last update
     updated = datetime.fromisoformat(issue['updatedAt'].replace('Z', '+00:00'))
     hours_since_update = (now - updated).total_seconds() / 3600
-    sla_hours = prod['sla']['first_response_hours']
+
+    # Use severity-based SLA: critical=24h, otherwise use routing config (default 48h)
+    if 'severity/critical' in labels:
+        sla_hours = 24
+    else:
+        sla_hours = prod['sla']['first_response_hours']
 
     if hours_since_update < sla_hours:
         continue
